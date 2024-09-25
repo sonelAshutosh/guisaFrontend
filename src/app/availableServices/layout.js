@@ -1,5 +1,12 @@
 'use client'
 
+import MobileNavbar from './MobileNavbar'
+
 export default function RootLayout({ children }) {
-  return <div>{children}</div>
+  return (
+    <div>
+      <MobileNavbar />
+      {children}
+    </div>
+  )
 }
