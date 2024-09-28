@@ -137,23 +137,22 @@ export default function MobileNavbar() {
         </div>
         <ul className="flex flex-col p-4 space-y-4">
           <li>
-            <Link href="/" className="block px-4 py-2 hover:bg-gray-700">
-              ...
-            </Link>
-          </li>
-          <li>
-            <Link href="/about" className="block px-4 py-2 hover:bg-gray-700">
-              ...
+            <Link
+              href="/availableServices"
+              className="block px-4 py-2 hover:bg-gray-700"
+            >
+              Available Services{' '}
             </Link>
           </li>
           <li>
             <Link
-              href="/services"
+              href="/availableServices/bookings"
               className="block px-4 py-2 hover:bg-gray-700"
             >
-              Services
+              Bookings{' '}
             </Link>
           </li>
+
           {!user.isProvider && (
             <li>
               <div
