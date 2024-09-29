@@ -1,6 +1,7 @@
 'use client'
 
 import API from '@/axios'
+import { Button } from '@/components/ui/button'
 import Cookies from 'js-cookie'
 import React, { useEffect, useState } from 'react'
 
@@ -28,6 +29,24 @@ function Requests() {
     fetchBookings()
   }, [])
 
+  // Handle status change
+  const handleStatusChange = async (bookingId, newStatus) => {
+    try {
+      await API.post(`/bookings/${bookingId}/status`, { status: newStatus })
+
+      // Optimistic update in UI
+      setBookingsRequests((prevRequests) =>
+        prevRequests.map((booking) =>
+          booking._id === bookingId
+            ? { ...booking, status: newStatus }
+            : booking
+        )
+      )
+    } catch (err) {
+      setError('Failed to update booking status.')
+    }
+  }
+
   if (loading) return <p>Loading booking requests...</p>
   if (error) return <p className="text-red-500">{error}</p>
 
@@ -51,6 +70,29 @@ function Requests() {
                 Location: {booking.service.location}
               </p>
               <p className="font-medium">Status: {booking.status}</p>
+
+              {/* Button to change status */}
+              <div className="flex mt-4 space-x-2">
+                {booking.status !== 'completed' && (
+                  <Button
+                    onClick={() => handleStatusChange(booking._id, 'completed')}
+                    className="px-2 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+                  >
+                    Mark as Completed
+                  </Button>
+                )}
+                {booking.status !== 'cancelled' ||
+                  (booking.status !== 'completed' && (
+                    <Button
+                      onClick={() =>
+                        handleStatusChange(booking._id, 'cancelled')
+                      }
+                      className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+                    >
+                      Cancel Booking
+                    </Button>
+                  ))}
+              </div>
             </li>
           ))}
         </ul>

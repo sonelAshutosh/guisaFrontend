@@ -58,6 +58,44 @@ function BookingsPage() {
     return services.find((service) => service._id === serviceId)
   }
 
+  const handlePayment = async (bookingId) => {
+    const confirmPayment = window.prompt('Do you want to confirm the payment?')
+
+    if (confirmPayment === 'confirm') {
+      try {
+        await API.post(`/bookings/${bookingId}/payment`)
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking._id === bookingId
+              ? { ...booking, paymentStatus: 'paid' }
+              : booking
+          )
+        )
+        alert('Payment successful!')
+      } catch (err) {
+        console.error('Payment failed:', err)
+        alert('Payment failed. Please try again.')
+      }
+    }
+  }
+
+  const handleCancelBooking = async (bookingId) => {
+    const confirmCancel = window.prompt('Do you want to cancel the booking?')
+
+    if (confirmCancel === 'cancel') {
+      try {
+        await API.delete(`/bookings/${bookingId}`)
+        setBookings((prevBookings) =>
+          prevBookings.filter((booking) => booking._id !== bookingId)
+        )
+        alert('Booking cancelled!')
+      } catch (err) {
+        console.error('Cancel booking failed:', err)
+        alert('Failed to cancel booking. Please try again.')
+      }
+    }
+  }
+
   if (loading) return <p>Loading bookings...</p>
   if (error) return <p className="text-red-500">{error}</p>
 
@@ -99,6 +137,20 @@ function BookingsPage() {
                         Location: {service ? service.location : 'N/A'}
                       </p>
                       <p className="font-medium">Status: {booking.status}</p>
+                      <p className="font-medium">
+                        Payment Status: {booking.paymentStatus}
+                      </p>
+
+                      {/* Show Pay Now button if booking is completed and not paid */}
+                      {booking.status === 'completed' &&
+                        booking.paymentStatus === 'pending' && (
+                          <button
+                            className="px-4 py-2 mt-2 text-white bg-green-500 rounded"
+                            onClick={() => handlePayment(booking._id)}
+                          >
+                            Pay Now
+                          </button>
+                        )}
                     </li>
                   )
                 })}

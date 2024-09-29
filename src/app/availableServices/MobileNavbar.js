@@ -136,6 +136,9 @@ export default function MobileNavbar() {
           </button>
         </div>
         <ul className="flex flex-col p-4 space-y-4">
+          <li className="px-4 py-2 bg-gray-800 rounded-lg">
+            Location - {user.address}
+          </li>
           <li>
             <Link
               href="/availableServices"
